@@ -215,14 +215,13 @@ if (FALSE) {  ## will work once plotFct does not depend on drcFct
         EDp*c(-log(exp(-tempVal/parmVec[5])-1)/(parmVec[1]^2), 
         0, 0, 1/parmVec[4], 
         exp(-tempVal/parmVec[5])*tempVal/(parmVec[5]^2)*(1/parmVec[1])*((exp(-tempVal/parmVec[5])-1)^(-1)))
+        
+        if (type == "absolute")
+        {
+          EDder[2:3] <- EDp * exp(-tempVal/parmVec[5]) / (parmVec[1]*parmVec[5]*(parmVec[3]-parmVec[2])*(exp(-tempVal/parmVec[5])-1)) *
+            c( exp(-tempVal)-1, 1)
+        }
 
-# The next lines are not needed because the lower/upper limits are independent of the parameters
-# governing the ED values     
-#        if (type == "absolute") 
-#        {
-#            denom <- (parmVec[3] - parmVec[2])^2
-#            EDder <- EDder*c(1, (parmVec[3] - respl)/denom, (respl - parmVec[2])/denom, 1, 1)
-#        }
         return(list(EDp, EDder[notFixed]))
     }
 

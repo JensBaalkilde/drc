@@ -168,10 +168,10 @@ if (FALSE)
 #            type <- "relative"
 #        }
         
-        if (identical(type, "absolute") && (parmVec[1] > 0) && (reference == "control"))
-        {
-            p <- 100 - p
-        }
+#         if (identical(type, "absolute") && (parmVec[1] > 0) && (reference == "control"))
+#         {
+#             p <- 100 - p
+#         }
                
 #        if ( (parmVec[1] > 0) && (reference == "control") ) 
 #        {
@@ -185,7 +185,19 @@ if (FALSE)
     
                 
 #        weibull1(fixed, names)$edfct(parm, 100 - p, reference, type, ...) 
-        weibull1(fixed, names)$edfct(parm, p, reference, "relative", ...) 
+#        weibull1(fixed, names)$edfct(parm, p, reference, "relative", ...) 
+        
+        tempVal <- log(-log(p/100))
+        EDp <- exp(tempVal/parmVec[1] + log(parmVec[4]))
+        EDder <- EDp*c(-tempVal/(parmVec[1]^2), 0, 0, 1/parmVec[4])
+        
+        if(identical(type, "absolute")){
+          tempVal2 <- p/100
+          EDder[2:3] <- c(EDp * tempVal2/(parm[1] * tempVal2 * (parm[3]-parm[2]) * log(tempVal2)),
+                          EDp * (1-tempVal2)/ (parm[1] * (parm[3]-parm[2]) * tempVal2 * log(tempVal2)) )
+        }
+        
+        return(list(EDp, EDder[notFixed]))
     }
 
 

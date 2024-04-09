@@ -199,8 +199,12 @@ fctName, fctText, loge = FALSE)
                 .value <- e * .expr2
                 .grad <- array(0, c(length(.value), 4L), list(NULL, c("b", "c", "d", "e")))
                 .grad[, "b"] <- -(e * (.expr2 * (qnorm(pProp) / (b^2))))
-                .grad[, "c"] <- 0
-                .grad[, "d"] <- 0
+                .grad[, "c"] <- ifelse(identical(type, "absolute"), 
+                                       .value * (pProp-1)/(b*dnorm(qnorm(pProp))*(d-c)),
+                                       0)  # 0
+                .grad[, "d"] <- ifelse(identical(type, "absolute"), 
+                                       - .value * pProp/(b*dnorm(qnorm(pProp))*(d-c)),
+                                       0) # 0
                 .grad[, "e"] <- .expr2
                 attr(.value, "gradient") <- .grad
                 .value
@@ -232,8 +236,12 @@ fctName, fctText, loge = FALSE)
                 .value <- e + qnorm(pProp)/b
                 .grad <- array(0, c(length(.value), 4L), list(NULL, c("b", "c", "d", "e")))
                 .grad[, "b"] <- -(qnorm(pProp)/ (b^2))
-                .grad[, "c"] <- 0
-                .grad[, "d"] <- 0
+                .grad[, "c"] <- ifelse(identical(type, "absolute"), 
+                                       .value * (pProp-1)/(b*dnorm(qnorm(pProp))*(d-c)),
+                                       0)  # 0
+                .grad[, "d"] <- ifelse(identical(type, "absolute"), 
+                                       - .value * pProp/(b*dnorm(qnorm(pProp))*(d-c)),
+                                       0) # 0
                 .grad[, "e"] <- 1
                 attr(.value, "gradient") <- .grad
                 .value

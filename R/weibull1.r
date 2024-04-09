@@ -197,7 +197,13 @@ if (FALSE)
         EDp <- exp(tempVal/parmVec[1] + log(parmVec[4]))
 
         EDder <- EDp*c(-tempVal/(parmVec[1]^2), 0, 0, 1/parmVec[4])
-    
+        
+        if(type == "absolute"){
+          tempVal2 <- (100-p)/100
+          EDder[2:3] <- c(EDp * (tempVal2 - 1)/(parmVec[1] * tempVal2 * (parmVec[3]-parmVec[2]) * log(tempVal2)),
+                          - EDp / (parmVec[1] * (parmVec[3]-parmVec[2]) * log(tempVal2)) )
+        }
+        
         return(list(EDp, EDder[notFixed]))
     }
 
