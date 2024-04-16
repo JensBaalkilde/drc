@@ -155,37 +155,17 @@ if (FALSE)
 #    
 #        return(list(EDp, EDder[notFixed]))
 #    }
-    edfct <- function(parm, p, reference, type, ...)
+    edfct <- function(parm, respl, reference, type, ...)
     {   
         parmVec[notFixed] <- parm
 
-        p <- absToRel(parmVec, p, type)
+        p <- absToRel(parmVec, respl, type)
 
         ## Reversing p
-#        if (identical(type, "absolute"))
-#        {
-#            p <- 100 - p
-#            type <- "relative"
-#        }
-        
-#         if (identical(type, "absolute") && (parmVec[1] > 0) && (reference == "control"))
-#         {
-#             p <- 100 - p
-#         }
-               
-#        if ( (parmVec[1] > 0) && (reference == "control") ) 
-#        {
-#            p <- 100 - p
-#            reference <- "upper"  # to avoid resetting of p in weibull1() called below    
-#        }
-#        if ( (parmVec[1] < 0) && (reference == "control") ) 
-#        {
-#            p <- 100 - p
-#        }
-    
-                
-#        weibull1(fixed, names)$edfct(parm, 100 - p, reference, type, ...) 
-#        weibull1(fixed, names)$edfct(parm, p, reference, "relative", ...) 
+        if ( (parmVec[1] > 0) && (reference == "control") && (type == "relative") )
+        {
+            p <- 100 - p
+        }
         
         tempVal <- log(-log(p/100))
         EDp <- exp(tempVal/parmVec[1] + log(parmVec[4]))
