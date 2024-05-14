@@ -238,10 +238,10 @@ fctName, fctText, loge = FALSE)
                 .grad[, "b"] <- -(qnorm(pProp)/ (b^2))
                 .grad[, "c"] <- ifelse(identical(type, "absolute"), 
                                        .value * (pProp-1)/(b*dnorm(qnorm(pProp))*(d-c)),
-                                       0)  # 0
+                                       0) # Addition by Jens Riis Baalkilde
                 .grad[, "d"] <- ifelse(identical(type, "absolute"), 
                                        - .value * pProp/(b*dnorm(qnorm(pProp))*(d-c)),
-                                       0) # 0
+                                       0) # Addition by Jens Riis Baalkilde
                 .grad[, "e"] <- 1
                 attr(.value, "gradient") <- .grad
                 .value

@@ -198,6 +198,7 @@ if (FALSE)
 
         EDder <- EDp*c(-tempVal/(parmVec[1]^2), 0, 0, 1/parmVec[4])
         
+        # Addition by Jens Riis Baalkilde
         if(type == "absolute"){
           tempVal2 <- (100-p)/100
           EDder[2:3] <- c(EDp * (tempVal2 - 1)/(parmVec[1] * tempVal2 * (parmVec[3]-parmVec[2]) * log(tempVal2)),

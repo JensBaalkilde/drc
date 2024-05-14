@@ -104,12 +104,18 @@ fctName, fctText)
         invfp <- function(resp, b, e)
         {
             fct0 <- function(x){resp - (b*(log(x+1)^p1) + e*(log(x+1)^p2))}
-            uniroot(fct0, c(0.001, 1000))$root
+            uniroot(fct0, c(0.001, 5000))$root
         }
 
         EDfct <- function(b, c, d, e) 
         {
             invfp(log((100-p)/p), b, e)
+        }
+        
+        EDfct0 <- function(par) 
+        {
+          p <- EDhelper2(par, respl, reference, type, par[1] > 0)
+          invfp(log((100-p)/p), par[1], par[4])
         }
         
 #        ## deriv(~b*(log(dose+1)^p1) + e*(log(dose+1)^p2), c("b", "c", "d", "e"), function(dose, b,c,d,e){})
@@ -134,7 +140,13 @@ fctName, fctText)
         logEDp <- log(EDp+1)
         denVal <- parmVec[1] * p1 * (logEDp)^(p1-1) + parmVec[4] * p2 * (logEDp)^(p2-1)
         derVec <- (EDp+1) * c(logEDp^p1, logEDp^p2) / denVal
-        EDder <- c(derVec[1], 0, 0, derVec[2])
+        EDder <- -c(derVec[1], 0, 0, derVec[2])
+        
+        # Addition by Jens Riis Baalkilde
+        if(type == "absolute"){
+          EDder[2:3] <- numDeriv::jacobian(EDfct0, parmVec)[2:3]
+        }
+        
         if (loged) 
         {
             EDder <- EDder / EDp

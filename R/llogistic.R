@@ -216,6 +216,7 @@ if (FALSE) {  ## will work once plotFct does not depend on drcFct
         0, 0, 1/parmVec[4], 
         exp(-tempVal/parmVec[5])*tempVal/(parmVec[5]^2)*(1/parmVec[1])*((exp(-tempVal/parmVec[5])-1)^(-1)))
         
+        # Addition by Jens Riis Baalkilde
         if (type == "absolute")
         {
           EDder[2:3] <- EDp * exp(-tempVal/parmVec[5]) / (parmVec[1]*parmVec[5]*(parmVec[3]-parmVec[2])*(exp(-tempVal/parmVec[5])-1)) *

@@ -132,37 +132,60 @@ if (FALSE)
 #    if (length(lowerc)==numParm) {lowerLimits <- lowerc[notFixed]} else {lowerLimits <- lowerc}
 #    if (length(upperc)==numParm) {upperLimits <- upperc[notFixed]} else {upperLimits <- upperc}
 
+    ##Defining the first derivatives (in x)
+    derivx <- function(dose, parm)
+    {
+      parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+      parmMat[, notFixed] <- parm
+      
+      t1 <- exp(parmMat[, 1]*(log(dose) - log(parmMat[, 4])))
+      t2 <- 1 + t1
+      
+      parmMat[, 5] / t2 - (parmMat[, 5]*dose - parmMat[, 2] + parmMat[, 3]) * t1 * parmMat[, 1] / (t2^2 * dose)
+    }
 
     ## Defining the ED function
-    edfct <- function(parm, respl, reference, type, lower = 1e-3, upper = 1000, ...)
+    edfct <- function(parm, respl, reference, type, lower = 1e-3, upper = 10000, ...)
     {
 #        if (is.missing(upper)) {upper <- 1000}
         interval <- c(lower, upper)     
      
         parmVec[notFixed] <- parm
-
         p <- EDhelper(parmVec, respl, reference, type)
         tempVal <- (100-p)/100
-
-        helpEqn <- function(dose) 
-        {
-            expVal <- exp(parmVec[1]*(log(dose)-log(parmVec[4])))
-            parmVec[5]*(1+expVal*(1-parmVec[1]))-(parmVec[3]-parmVec[2])*expVal*parmVec[1]/dose
+        
+        edfct0 <- function(parmVec){
+          p <- EDhelper(parmVec, respl, reference, type)
+          tempVal <- (100-p)/100
+  
+          helpEqn <- function(dose) 
+          {
+              expVal <- exp(parmVec[1]*(log(dose)-log(parmVec[4])))
+              parmVec[5]*(1+expVal*(1-parmVec[1]))-(parmVec[3]-parmVec[2])*expVal*parmVec[1]/dose
+          }
+          maxAt <- uniroot(helpEqn, interval)$root
+      
+          eqn <- function(dose) {tempVal*(1+exp(parmVec[1]*(log(dose)-log(parmVec[4]))))-(1+parmVec[5]*dose/(parmVec[3]-parmVec[2]))}
+          EDp <- uniroot(eqn, lower = maxAt, upper = upper)$root
+          EDp
         }
-        maxAt <- uniroot(helpEqn, interval)$root
-    
-        eqn <- function(dose) {tempVal*(1+exp(parmVec[1]*(log(dose)-log(parmVec[4]))))-(1+parmVec[5]*dose/(parmVec[3]-parmVec[2]))}
-        EDp <- uniroot(eqn, lower = maxAt, upper = upper)$root
 
+        EDp <- edfct0(parmVec)
         EDdose <- EDp
         tempVal1 <- exp(parmVec[1]*(log(EDdose)-log(parmVec[4])))
         tempVal2 <- parmVec[3]-parmVec[2]
         derParm <- c(tempVal*tempVal1*(log(EDdose)-log(parmVec[4])), -parmVec[5]*EDdose/((tempVal2)^2),
                      parmVec[5]*EDdose/((tempVal2)^2), -tempVal*tempVal1*parmVec[1]/parmVec[4],
                      -EDdose/tempVal2)
-        derDose <- tempVal*tempVal1*parmVec[1]/EDdose-parmVec[5]/tempVal2 
+        derParm <- c(-tempVal*tempVal1*(log(EDdose)-log(parmVec[4])), parmVec[5]*EDdose/((tempVal2)^2),
+                     parmVec[5]*EDdose/((tempVal2)^2), tempVal*tempVal1*parmVec[1]/parmVec[4],
+                     EDdose/tempVal2)
+        derDose <- tempVal*tempVal1*parmVec[1]/EDdose-parmVec[5]/tempVal2
 
         EDder <- derParm/derDose
+        
+        # Addition by Jens Riis Baalkilde
+        EDder[2:3] <- numDeriv::jacobian(edfct0, parmVec)[2:3]
         
         return(list(EDp, EDder[notFixed]))
     }
@@ -249,13 +272,13 @@ if (FALSE)
 
 
     returnList <- 
-    list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, 
+    list(fct = fct, ssfct = ssfct, names = names, deriv1 = deriv1, deriv2 = deriv2, derivx = derivx, 
 #    lowerc = lowerLimits, upperc = upperLimits, confct = confct, 
     edfct = edfct, maxfct = maxfct, 
 #    scaleInd = scaleInd, anovaYes = anovaYes,
     name = ifelse(missing(fctName), as.character(match.call()[[1]]), fctName),
     text = ifelse(missing(fctText), "Brain-Cousens (hormesis)", fctText),
-    noParm = sum(is.na(fixed)))
+    noParm = sum(is.na(fixed)), fixed = fixed)
 
 #    returnList <- switch(return, "fct+ss" = list(fct,ssfct,names),
 #                                 "fct+ss+der" = list(fct,ssfct,names,deriv1,deriv2),

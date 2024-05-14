@@ -99,9 +99,10 @@ if (FALSE)
     }
 
     ## Defining the ED function
-    edfct <- function(parm, p, ...)
+    edfct <- function(parm, respl, reference, type, ...)
     {
         parmVec[notFixed] <- parm
+        p <- EDhelper(parmVec, respl, reference, type)
     
 #        if (parmVec[1] > 0) 
 #        {
@@ -115,15 +116,20 @@ if (FALSE)
         EDderFct <- 
         function (b, c, d, e, f) 
         {
-            .expr2 <- 100/p
+            #.expr2 <- 100/p
+            .expr2 <- 100/(100-p)
             .expr4 <- .expr2^(1/f)
             .expr5 <- .expr4 - 1
             .expr6 <- log(.expr5)
             .value <- e + .expr6/b
             .grad <- array(0, c(length(.value), 5L), list(NULL, c("b", "c", "d", "e", "f")))
             .grad[, "b"] <- -(.expr6/b^2)
-            .grad[, "c"] <- 0
-            .grad[, "d"] <- 0
+            .grad[, "c"] <- ifelse(identical(type, "absolute"),
+                                   .expr4 * (.expr2-1) / (b*f*(d-c)*.expr5),
+                                   0) # Addition by Jens Riis Baalkilde
+            .grad[, "d"] <- ifelse(identical(type, "absolute"), 
+                                   .expr4 / (b*f*(d-c)*.expr5),
+                                   0) # Addition by Jens Riis Baalkilde
             .grad[, "e"] <- 1
             .grad[, "f"] <- -(.expr4 * (log(.expr2) * (1/f^2))/.expr5/b)
             attr(.value, "gradient") <- .grad
