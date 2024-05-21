@@ -1,4 +1,5 @@
 ## Changes in 'drc' 
+2024-05-14: Changed edfct in llogistic, llogistic2, lnormal, logistic, weibull1, weibull2, fplogistic, braincousens, so the derivative in the parameters is correct when type = "absolute". This ensures correct Std. Errors when ED() is called with type = "absolute" (update by Jens Riis Baalkilde).
 
 2017-12-19: Updating the event-time part of "drc", in particular in drm() (improved code provided by Andrea Onofri).
 
@@ -44,7 +45,7 @@ Calculation of the log likelihood for binomial data has updated and improved.
 
 2015-08-07: Help page for EDcomp() updated.
 
-2015-07-30: Robust estimation is working again (ater reports from Kathy Mutambanengwe, Sten Ilmjärv, and Corina Dueñas Roca).
+2015-07-30: Robust estimation is working again (ater reports from Kathy Mutambanengwe, Sten Ilmj?rv, and Corina Due?as Roca).
 
 2015-04-14: Minor labelling issue in the plot method resolved (with help from Bert Oosthuyse). 
 
@@ -114,7 +115,7 @@ was applied.
 
 2012-11-19: Small bug in drm() related to starting values for event-time models resolved. 
 
-2012-10-22: hatvalues and cooks.distance methods have been added (after a question from Sunniva Förster). 
+2012-10-22: hatvalues and cooks.distance methods have been added (after a question from Sunniva F?rster). 
 noEffect() function included for testing the dose-response model against a simpler model with no dose effect 
 (after a suggestion by Ryan Hechinger).
 
@@ -160,7 +161,7 @@ noEffect() function included for testing the dose-response model against a simpl
 
 2011-10-27: Help page of mixture() has been slightly improved. 
 
-2011-09-20: Problem with logDose argument in drm() and subsequent plotting has been solved (reported by Ralf Schäfer). 
+2011-09-20: Problem with logDose argument in drm() and subsequent plotting has been solved (reported by Ralf Sch?fer). 
 
 2011-09-02: Constrained estimation uses the actual limits provided (bug report by Andrew Kniss).
 
@@ -175,7 +176,7 @@ benn added.
 
 2011-07-01: Small update in the calculation of confidence intervals (after a suggestion from Scott Ray). 
 
-2011-06-24: The model function W2x.4() has been added (after a suggestion by Cécile Cornou).
+2011-06-24: The model function W2x.4() has been added (after a suggestion by C?cile Cornou).
 
 2011-05-24: Small improvement in the calculation of ED value for the log-normal and Weibull type 2 models. 
 "display" and "type" arguments have been added to maED(). 
@@ -191,7 +192,7 @@ benn added.
 2011-04-09: multdrc() has been completely removed. 
 
 2011-04-04: The model function weibull2x() (a model including a sort of "lag time" parameter) 
-has been added (after a suggestion by Cécile Cornou).
+has been added (after a suggestion by C?cile Cornou).
 
 2011-03-23: A small bug in ED() has been fixed (after a report from Nathan Pace).
 
@@ -240,7 +241,7 @@ involving several curves (after a suggestion from Andre Kleensang).
 2010-04-23: Minor bug in the predict method has been fixed. This means that type="bars" in the plot method now works again 
 (after a bug report by Andy Robinson). 
 
-2010-04-16: The help for NEC() has been improved (after a question from Inés González). 
+2010-04-16: The help for NEC() has been improved (after a question from In?s Gonz?lez). 
 
 2010-04-15: The comped() has been re-introduced (after suggestion from Jochen Zubrod). 
 
